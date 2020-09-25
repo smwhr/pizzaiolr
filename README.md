@@ -33,4 +33,4 @@ Etape 1 :
    - maxi faim (1M ; 3 garnitures ; 2 extra) : 15
    - végé (S ou M ; 3 garnitures (uniquement végé) ; 1 extra (uniquement végé)) : 12
  ## formule duo :
-    - 2 pizzas, S ou M ; 2 garnitures chaque ; 2 extra chaques : (20 les deux)
+   - 2 pizzas, S ou M ; 2 garnitures chaque ; 2 extra chaques : (20 les deux)
