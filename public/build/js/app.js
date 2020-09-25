@@ -16,9 +16,6 @@ app.controller('OrderController', ['$scope', function($scope) {
       "label": "Petite faim",
       "price": 11,
       "eligible": function(pizza){
-        console.log(pizza.size.id == "small", 
-                    pizza.ingredients.length <= 2,
-                    pizza.toppings.length)
         return pizza.size.id == "small"
         && Object.entries(pizza.ingredients).length <= 2
         && Object.entries(pizza.toppings).length <= 2
