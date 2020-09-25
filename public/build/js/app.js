@@ -11,6 +11,43 @@ app.controller('OrderController', ['$scope', function($scope) {
 
   $ctrl.orderedPizzas = [];
 
+  var formulas = {
+    "petite-faim":{
+      "label": "Petite faim",
+      "price": 11,
+      "eligible": function(pizza){
+        console.log(pizza.size.id == "small", 
+                    pizza.ingredients.length <= 2,
+                    pizza.toppings.length)
+        return pizza.size.id == "small"
+        && Object.entries(pizza.ingredients).length <= 2
+        && Object.entries(pizza.toppings).length <= 2
+      }
+    },
+    "maxi-faim":{
+      "label": "Maxi faim",
+      "price": 15,
+      "eligible": function(pizza){
+        return pizza.size.id == "medium"
+        && Object.entries(pizza.ingredients).length <= 3
+        && Object.entries(pizza.toppings).length <= 2
+      }
+    },
+    "veggy":{
+      "label": "Végétarien",
+      "price": 12,
+      "eligible": function(pizza){
+        return (pizza.size.id == "medium" || pizza.size.id == "small")
+        && Object.entries(pizza.ingredients).length <= 3
+        && Object.entries(pizza.ingredients).filter(entry => !(entry[1].veggy)).length == 0
+        && Object.entries(pizza.toppings).length <= 1
+        && Object.entries(pizza.toppings).filter(entry => !(entry[1].veggy)).length == 0
+      }
+    },
+
+
+  }
+
 
   $ctrl.order = function(){
     var pizzaOrder = {...{
@@ -32,6 +69,13 @@ app.controller('OrderController', ['$scope', function($scope) {
                      + pizzaOrder.base.price
                      + Object.entries(pizzaOrder.ingredients).reduce((s, i) => s+i[1].price, 0)
                      + Object.entries(pizzaOrder.toppings).reduce((s, i) => s+i[1].price, 0)
+
+    pizzaOrder.eligibleFormulas = Object.entries(formulas)
+                                        .map(f_ent => ({"id":f_ent[0], ... f_ent[1]}))
+                                               .filter(f => f.eligible(pizzaOrder))
+                                               .sort((fa,fb) =>  fa.price - fb.price)
+                                               .filter(f => f.price < pizzaOrder.price)
+                                
 
     console.log(pizzaOrder)
 
@@ -55,6 +99,8 @@ app.controller('OrderController', ['$scope', function($scope) {
     if(element == "ingredients") $scope.step = Math.max($scope.step, 5);
     if(element == "toppings") $scope.step = Math.max($scope.step, 6);
   }
+
+  
 
 
 }]);

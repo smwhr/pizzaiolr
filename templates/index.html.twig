@@ -184,9 +184,11 @@
               </div>
               <footer class="card-footer">
                 <p class="card-footer-item">
-                  <span >
+                  <span ng-class="{'strike' : (pizza.eligibleFormulas.length > 0)}">
                     {[{pizza.price}]}€
                   </span>
+
+                  <span class="tag is-success" ng-show="pizza.eligibleFormulas.length > 0">{[{pizza.eligibleFormulas[0].label}]} : {[{pizza.eligibleFormulas[0].price}]}€</span>
                 </p>
                 
                 <p class="card-footer-item">
