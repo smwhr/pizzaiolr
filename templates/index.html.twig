@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+
+  <section class="hero is-medium is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Pizzaiolr
+        </h1>
+        <h2 class="subtitle">
+          Ta pizza, comme tu l'aimes.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+<div class="container ng-cloak" ng-controller="OrderController as $ctrl" ng-cloak>
+  <div class="columns is-centered" ng-init="step = 0">
+    <div class="column is-8">
+      <section class="mt-5 mb-5" ng-show="step == 0">
+          <div class="columns is-centered">
+            <div class="column is-10">
+              <button class="button is-large is-fullwidth" ng-click="step = 1">
+                Je commande une <span ng-show="$ctrl.orderedPizzas.length > 0">&nbsp;autre&nbsp;</span>pizza
+              </button>
+            </div>
+          </div>
+        </section>
+      <form  ng-submit="$ctrl.order()">
+
+        <section class="mt-5 mb-5" ng-show="step >= 1">
+          <div class="columns is-centered">
+            <div class="column is-10 field">
+                <label class="label">Choix de la pâte</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="pizza_type" ng-model="pizza_type" ng-change="$ctrl.chose('type', pizza_type)">
+                      <option disabled="disabled"></option>
+                      {% for k, choice in choices.type %}
+                          <option value="{{k}}" ng-value="{{choice|json_encode}}">{{choice.label}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="mt-5 mb-5" ng-show="step >= 2">
+          <div class="columns is-centered">
+            <div class="column is-10 field">
+                <label class="label">Choix de la taille</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="pizza_size" 
+                            ng-model="pizza_size" ng-change="$ctrl.chose('size', pizza_size)">
+                      <option disabled="disabled"></option>
+                      {% for k, choice in choices.size %}
+                          <option value="{{k}}" 
+                                  ng-value="{{choice|json_encode}}"
+                                  >{{choice.label}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-5 mb-5" ng-show="step >= 3">
+          <div class="columns is-centered">
+            <div class="column is-10 field">
+                <label class="label">Base de la pizza</label>
+                <div class="control">
+                  {% for k, choice in choices.base %}
+                  <label class="radio">
+                    <input type="radio" 
+                           ng-model="pizza_base" 
+                           ng-change="$ctrl.chose('base', pizza_base)"
+                           name="pizza_base" 
+                           ng-value="{{choice|json_encode}}"
+                           value="{{k}}">
+                    {{choice.label}}
+                  </label>
+                  {% endfor %}
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-5 mb-5" ng-show="step >= 4">
+          <div class="columns is-centered">
+            <div class="column is-10 field">
+                <label class="label">Garniture</label>
+                <div class="control">
+                  {% for k, choice in choices.ingredients %}
+                  <label class="radio">
+                    <input type="checkbox" 
+                           ng-model="pizza_ingredients['{{k}}']" 
+                           ng-change="$ctrl.chose('ingredients', pizza_ingredients)"
+                           name="pizza_ingredients[]" 
+                           ng-true-value="{{choice|json_encode}}"
+                           value="{{k}}">
+                    {{choice.label}}
+                  </label>
+                  {% endfor %}
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-5 mb-5" ng-show="step >= 5">
+          <div class="columns is-centered">
+            <div class="column is-10 field">
+                <label class="label">Extra</label>
+                <div class="control">
+                  {% for k, choice in choices.toppings %}
+                  <label class="radio">
+                    <input type="checkbox" 
+                           ng-model="pizza_toppings['{{k}}']" 
+                           ng-change="$ctrl.chose('toppings', pizza_toppings)"
+                           name="pizza_toppings[]" 
+                           ng-true-value="{{choice|json_encode}}"
+                           value="{{k}}">
+                    {{choice.label}}
+                  </label>
+                  {% endfor %}
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-5 mb-5" ng-show="step >= 6">
+          <div class="columns is-centered">
+            <div class="column is-8">
+              <button type="submit" class="button is-large is-fullwidth" ng-click="step = 0">
+                Je commande
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </form>
+    </div>
+
+    <div class="column is-4" ng-show="$ctrl.orderedPizzas.length > 0">
+      <section class="mt-5 mb-5">
+        <div class="columns is-centered is-multiline">
+          <div class="column is-12" ng-repeat="(pkey, pizza) in $ctrl.orderedPizzas">
+            <div class="card">
+              <div class="card-content">
+                <p class="title">
+                  Pizza #{[{pkey + 1}]}
+                </p>
+                <p class="subtitle">
+                  Taille {[{pizza.size.label.toLowerCase()}]}, 
+                  pâte {[{pizza.type.label.toLowerCase()}]},
+                  base {[{pizza.base.label.toLowerCase()}]}
+                </p>
+                <div class="content">
+                    <strong>Garniture</strong> : 
+                    <span ng-repeat="(k, ingredient) in pizza.ingredients"> {[{ingredient.label}]}<font ng-show="!$last">, </font>
+                    </span><br>
+                    <strong>Extra</strong> : <span ng-repeat="(k, extra) in pizza.toppings">{[{extra.label}]}<font ng-show="!$last">, </font></span>
+                </div>
+              </div>
+              <footer class="card-footer">
+                <p class="card-footer-item">
+                  <span >
+                    {[{pizza.price}]}€
+                  </span>
+                </p>
+                
+                <p class="card-footer-item">
+                  <span ng-click="$ctrl.remove(pkey)">
+                    Annuler
+                  </span>
+                </p>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</div>
+
+
+{% endblock %}
